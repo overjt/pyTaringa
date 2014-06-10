@@ -122,7 +122,7 @@ class Taringa(object):
 
             cookie['ln'] = request.cookies.get('ln', '')
             cookie['tid'] = request.cookies.get('tid', '')
-            cookie['trnssn'] = request.cookies.get('trnssn', '')
+            cookie['trngssn'] = request.cookies.get('trngssn', '')
 
             self.cookie = cookie
 
