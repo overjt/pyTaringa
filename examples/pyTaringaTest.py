@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
 import time
-from pyTaringa import pyTaringa
+import sys
+sys.path.append("../")
+from pytaringa import Taringa, Shout, Kn3
 
 if __name__ == '__main__':
-    username = "YOUR USERNAME"
-    password = "YOUR PASSWORD"
-    taringa = pyTaringa(username,password)
+    username = "USERNAME"
+    password = "PASSWORD"
+    taringa = Taringa(username,password)
+    shout =  Shout(taringa.cookie)
     print taringa.username
     print taringa.password
     print taringa.user_key
     print taringa.user_id
     print taringa.cookie
-    print taringa.shoutText("#Test - PyT")
-    time.sleep(8)
-    print taringa.shoutImage("#Test - PyT - ImageShout","http://traduccionesyedra.files.wordpress.com/2012/04/testing.jpg")
-    print taringa.getUserId("anpep")
-    print taringa.getUserId("overjt")
-    print taringa.likeShout("47574275","19963011")
-    print taringa.deleteShout("47405007")
-    print taringa.getShoutText("47420358")
-    lastShout = taringa.getLastShoutId("19963011")
+    print shout.add("Hola a todos")
+    time.sleep(10)
+    print shout.add("#PyT ImageShout",1,0,Kn3.import_to_kn3("http://traduccionesyedra.files.wordpress.com/2012/04/testing.jpg"))
+    print taringa.get_user_id_from_nick("anpep")
+    print taringa.get_user_id_from_nick("overjt")
+    print shout.like("50735408","19963011")
+    print shout.delete("50735241")
+    print shout.get_object("47420358")["body"]
+    lastShout = shout.get_last_shout_from_id("19963011")
     print lastShout
-    print taringa.getShoutText(lastShout)
-    print taringa.importToKn3("http://www.rafaelrojas.net/wp-content/uploads/2012/03/Arch-Linux.png")
+    print shout.get_object(lastShout)["body"]
+    print Kn3.import_to_kn3("http://www.taringa.net")

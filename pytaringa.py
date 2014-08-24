@@ -4,11 +4,11 @@
 
 from functools import wraps
 from datetime import datetime
-
 import re
 import json
 import requests
-
+import time
+import os
 USER_AGENT = 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:29.0) '
 USER_AGENT += 'Gecko/20100101 Firefox/29.0'
 
@@ -86,7 +86,7 @@ class Taringa(object):
                  user_key=None):
         self.cookie = cookie
         self.user_key = user_key
-
+        self.user_id = None
         self.username = username
         self.password = password
         self.base_url = BASE_URL
@@ -95,7 +95,7 @@ class Taringa(object):
         if self.cookie is None:
             self.login()
             self.store_user_key()
-            self.stostore_user_id()
+            self.store_user_id()
 
     def login(self):
         data = {
@@ -125,13 +125,12 @@ class Taringa(object):
             cookie['trngssn'] = request.cookies.get('trngssn', '')
 
             self.cookie = cookie
-
             debug('Logged in succesfuly as %s' % self.username)
 
     @user_logged_in
     def store_user_id(self):
-        user_id = self.cookie.get('tid').rsplit('%3A%3A')[0]
-        self.cookie.update({'user_id': user_id})
+        self.user_id = self.cookie.get('tid').rsplit('%3A%3A')[0]
+        self.cookie.update({'user_id': self.user_id})
 
     @user_logged_in
     def store_user_key(self):
@@ -141,16 +140,19 @@ class Taringa(object):
         user_key = re.findall(regex, request.text, re.DOTALL)
 
         if len(user_key) > 0:
+            self.user_key = user_key[0]
             self.cookie.update({'user_key': user_key[0]})
-        return debug('Could not obtain user_key')
+        else:
+            return debug('Could not obtain user_key')
 
     def get_user_id_from_nick(self, user_nick):
         url = self.api_url + '/user/nick/view/%s' % user_nick
         request = TaringaRequest().get_request(url)
         response = json.loads(request.text)
-
-        return response
-
+        if "code" in response:
+            return None
+        else:
+            return response["id"]
 
 class Shout(object):
     def __init__(self, cookie):
@@ -159,33 +161,46 @@ class Shout(object):
         self.api_url = API_URL
 
     @user_logged_in
-    def add(self, body, type=0, privacy=0, attachment=''):
+    def add(self, body, type_shout=0, privacy=0, attachment=''):
         data = {
-            'key': self.cookie.get('key'),
+            'key': self.cookie.get('user_key'),
             'attachment': attachment,
-            'attachment_type': 0,
+            'attachment_type': type_shout,
             'privacy': privacy,
             'body': body
         }
 
         url = self.base_url + '/ajax/shout/add'
-        TaringaRequest(cookie=self.cookie).post_request(url, data=data)
+        regex = r'</i>.*?<a href="(.*?)" title="Hace instantes"'
+        request = TaringaRequest(cookie=self.cookie).post_request(url, data=data)
+        urlshout = re.findall(regex, request.text, re.DOTALL)
+        if len(urlshout) > 0:
+            return "http://www.taringa.net" + urlshout[0]
+        else:
+            return debug('Could not obtain shout url')
+
 
     def like(self, shout_id, owner_id):
         data = {
-            'key': self.cookie.get('key'),
+            'key': self.cookie.get('user_key'),
             'owner': owner_id,
             'uuid': shout_id,
             'score': '1'
         }
 
         url = self.base_url + '/ajax/shout/vote'
-        TaringaRequest(cookie=self.cookie).post_request(url, data=data)
+        request = TaringaRequest(cookie=self.cookie).post_request(url, data=data)
+        response = json.loads(request.text)
+        if response["status"] == 1:
+            return 1
+        else:
+            return "0 " + response["data"]
+
 
     def delete(self, shout_id):
         data = {
             'owner': self.cookie.get('user_id'),
-            'key': self.cookie.get('key'),
+            'key': self.cookie.get('user_key'),
             'id': shout_id
         }
 
@@ -199,9 +214,44 @@ class Shout(object):
 
         return response
 
+    def get_last_shout_from_id(self, user_id):
+        url = self.api_url + '/shout/user/view/%s?trim_user=true' % user_id
+        request = TaringaRequest().get_request(url)
+        response = json.loads(request.text)
+
+        if "code" in response:
+            return None
+        else:
+            for shout in response:
+                if shout["owner"] == str(user_id):
+                    return shout["id"]
+            return None
+
 
 class Kn3(object):
     @staticmethod
     def import_to_kn3(url):
-        pass
-        # to implement
+        request = requests.get(url, stream=True)
+        if request.status_code == 200:
+            temp_name = str(time.time())
+            with open(temp_name, 'wb') as f:
+                for chunk in request.iter_content(1024):
+                    f.write(chunk)
+            upload = Kn3.upload(temp_name)
+            os.remove(temp_name)
+            if not upload:
+                debug("Could not upload image")
+                return "Could not upload image"
+            else:
+                return upload
+
+    @staticmethod
+    def upload(filename):
+        kn3Url = "http://kn3.net/upload.php"
+        files = {'files[]': open(filename, 'rb')}
+        r = requests.post(kn3Url,files=files)
+        if r.status_code == 200:
+            response = json.loads(r.text)
+            return response["direct"]
+        else:
+            return None
