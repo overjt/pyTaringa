@@ -25,4 +25,4 @@ if __name__ == '__main__':
     lastShout = shout.get_last_shout_from_id("19963011")
     print lastShout
     print shout.get_object(lastShout)["body"]
-    print Kn3.import_to_kn3("http://www.taringa.net")
+    print Kn3.import_to_kn3("http://conociendogithub.readthedocs.org/en/latest/_images/GitHub.png")
