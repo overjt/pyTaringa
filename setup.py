@@ -4,7 +4,7 @@ with open('README.md') as f:
     readme = f.read()
 
 setup(name='pytaringa',
-      version='0.1',
+      version='0.1.3',
       author='OverJT',
       author_email='me@over.cf',
       license='MIT',
@@ -13,4 +13,4 @@ setup(name='pytaringa',
       install_requires=[
         "requests",
       ],
-      py_modules=find_packages())
+      packages=find_packages())

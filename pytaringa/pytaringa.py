@@ -1,7 +1,4 @@
-#! /usr/bin/env python
 # -*- coding:Utf-8 -*-
-
-
 from functools import wraps
 from datetime import datetime
 import re

@@ -2,6 +2,8 @@ LICENSE
 MANIFEST.in
 README.md
 setup.py
+pytaringa/__init__.py
+pytaringa/pytaringa.py
 pytaringa.egg-info/PKG-INFO
 pytaringa.egg-info/SOURCES.txt
 pytaringa.egg-info/dependency_links.txt
