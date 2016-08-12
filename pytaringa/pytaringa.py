@@ -1,4 +1,5 @@
-# -*- coding:Utf-8 -*-
+# -*- coding: utf-8 -*-
+
 from functools import wraps
 from datetime import datetime
 import re
@@ -133,13 +134,12 @@ class Taringa(object):
 
     @user_logged_in
     def store_realtime_data(self):
-        regex = r'new Realtime\({\"host\":\"([.0-9]+)\",\"port\":(\d+)}(?:.+) notifications\(\'([a-z0-9]+)\','
+        regex = r'new Realtime\({\"host\"\:\"([\w\.]+)\",\"port\":([\d]+).*}\)'
         request = TaringaRequest(cookie=self.cookie).get_request(self.base_url)
 
         realtime = re.findall(regex, request.text, re.DOTALL)
-
         if len(realtime) > 0:
-            if len(realtime[0]) == 3:
+            if len(realtime[0]) == 2:
                 self.realtime = realtime[0]
             else:
                 raise TaringaException('Login failed: Wrong auth data?')
