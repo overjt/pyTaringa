@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import time
 import sys
+import os
 from pytaringa import Taringa, Shout, Kn3
 
 if __name__ == '__main__':
-    username = "zodman"
-    password = "zxczxc"
+    username = os.environ.get("USERNAME")
+    password = os.environ.get("PASSWORD")
     taringa = Taringa(username,password)
     shout =  Shout(taringa.cookie)
     print taringa.username
