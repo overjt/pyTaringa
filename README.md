@@ -61,7 +61,13 @@ if __name__ == '__main__':
 
 ```
 
-Todos los ejemplos están en el archivo `examples/test.js`
+Todos los ejemplos están en el archivo `examples/test.py`
+
+
+Para probar ejecuta:
+
+ USERNAME=taringo PASSWORD=shalala python -m pytaringa.examples.test
+
 
 ##TODO
 * Comentar el código
