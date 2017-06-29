@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: pytaringa
-Version: 0.1.3
+Version: 0.1.4
 Summary: Un wrapper de taringa
 Home-page: UNKNOWN
 Author: OverJT
@@ -69,7 +69,13 @@ Description: #pyTaringa
         
         ```
         
-        Todos los ejemplos están en el archivo `examples/test.js`
+        Todos los ejemplos están en el archivo `examples/test.py`
+        
+        
+        Para probar ejecuta:
+        
+         USERNAME=taringo PASSWORD=shalala python -m pytaringa.examples.test
+        
         
         ##TODO
         * Comentar el código

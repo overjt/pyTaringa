@@ -9,3 +9,4 @@ pytaringa.egg-info/SOURCES.txt
 pytaringa.egg-info/dependency_links.txt
 pytaringa.egg-info/requires.txt
 pytaringa.egg-info/top_level.txt
+pytaringa/examples/test.py
