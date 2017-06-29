@@ -134,7 +134,7 @@ class Taringa(object):
 
     @user_logged_in
     def store_realtime_data(self):
-        regex = r'new Realtime\({\"host\"\:\"([\w\.]+)\",\"port\":([\d]+).*}\)'
+        regex = r"new Realtime\({\"host\":\"(.*?)\",\"port\":(\d+),\"useSSL\":true}(?:.+) notifications\('([a-z0-9]+)"
         request = TaringaRequest(cookie=self.cookie).get_request(self.base_url)
 
         realtime = re.findall(regex, request.text, re.DOTALL)
